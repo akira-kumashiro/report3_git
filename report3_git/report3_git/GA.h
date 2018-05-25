@@ -23,13 +23,13 @@ public:
 	class Data//データ格納用クラス
 	{
 	public:
-		std::vector<int> x;//座標
+		std::vector<int> num;//座標
 		double functionValue;//与えられた関数の値
 		double result;
 
 		Data(int _var_num)//コンストラクタ
 		{
-			x.resize(_var_num);//isIncludedの配列の長さの設定
+			num.resize(_var_num);//isIncludedの配列の長さの設定
 		}
 	};
 

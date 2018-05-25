@@ -10,9 +10,9 @@ GA::GA(int _max_genom_list, int _var_num, std::vector<GA::CityData> _model) :
 
 	for (int i = 0; i < data.size(); i++)
 	{
-		for (int j = 0; j < data[i].x.size(); j++)
+		for (int j = 0; j < data[i].num.size(); j++)
 		{
-			data[i].x[j] = random(varMin[j], varMax[j]);//遺伝子の初期設定
+			data[i].num[j] = random(varMin[j], varMax[j]);//遺伝子の初期設定
 		}
 	}
 	prev_data = data;
@@ -53,13 +53,13 @@ void GA::blxAlphaCrossover()
 
 	for (int i = 0; i < data.size(); i += 2)//2個ずつ交叉
 	{
-		for (int j = 0; j < data[i].x.size(); j++)
+		for (int j = 0; j < data[i].num.size(); j++)
 		{
-			double ave = (data[i].x[j] + data[i + 1].x[j]) / 2;
-			double length = std::abs((data[i].x[j] - data[i + 1].x[j]));
+			double ave = (data[i].num[j] + data[i + 1].num[j]) / 2;
+			double length = std::abs((data[i].num[j] - data[i + 1].num[j]));
 
-			data[i].x[j] = random(ave - length * (1 / 2 + alpha), ave + length * (1 / 2 + alpha));
-			data[i + 1].x[j] = random(ave - length * (1 / 2 + alpha), ave + length * (1 / 2 + alpha));
+			data[i].num[j] = random(ave - length * (1 / 2 + alpha), ave + length * (1 / 2 + alpha));
+			data[i + 1].num[j] = random(ave - length * (1 / 2 + alpha), ave + length * (1 / 2 + alpha));
 		}
 	}
 }
@@ -68,15 +68,80 @@ void GA::pmxCrossover()
 {
 	prev_data = data;
 
+	int del1 = random(0, (int)data[0].num.size() - 1);
+	int del2 = random(del1, (int)data[0].num.size());
+
+	//Step1
 	for (int i = 0; i < data.size(); i += 2)//2個ずつ交叉
 	{
-		int del1 = random(0, (int)data[i].x.size() - 1);
-		int del2 = random(del1, (int)data[i].x.size());
 
-		for (int j = del1; j < del2; j++)
+		//for (int j = del1; j < del2; j++)
+		for (int j = 0; j < data[i].num.size(); j++)
 		{
-			data[i + 1].x[j] = prev_data[i].x[j];
-			data[i].x[j] = prev_data[i + 1].x[j];
+			if (j<del1 || j>del2)
+			{
+				data[i].num[j] = -1;
+
+				data[i + 1].num[j] = -1;
+			}
+			else
+			{
+				data[i + 1].num[j] = prev_data[i].num[j];
+				data[i].num[j] = prev_data[i + 1].num[j];
+			}
+		}
+	}
+
+	//Step2
+	for (int i = 0; i < data.size(); i++)
+	{
+		for (int j = 0; j < data[i].num.size(); j++)
+		{
+			if (data[i].num[j] == -1)
+			{
+				bool isIncluded = false;
+				for (int k = 0; k < data[i].num.size(); k++)
+				{
+					if (prev_data[i].num[j] == data[i].num[k])
+					{
+						isIncluded = true;
+					}
+				}
+				if (!isIncluded)
+				{
+					data[i].num[j] = prev_data[i].num[j];
+				}
+			}
+}
+	}
+	//Steo3
+	for (int i = 0; i < data.size(); i++)
+	{
+		int emptyNum = 0;
+		std::vector<int> noPlacedCity, noPlacedCityTemp;
+		for (int j = 0; j < data[i].num.size(); j++)
+		{
+			noPlacedCity[j] = j;
+		}
+
+		for (int j = 0; j < data[i].num.size(); j++)
+		{
+			if (data[i].num[j] == -1)
+			{
+				emptyNum++;
+			}
+			else
+			{
+				noPlacedCity.erase(noPlacedCity.begin() + j);
+			}
+		}
+		noPlacedCityTemp = noPlacedCity;
+
+		for (int j = 0; j < noPlacedCity.size(); j++)
+		{
+			int point = random(0, (int)noPlacedCityTemp.size());
+			noPlacedCity[j] = noPlacedCityTemp[point];
+			noPlacedCityTemp.erase(noPlacedCityTemp.begin() + point);
 		}
 	}
 }
@@ -91,10 +156,10 @@ void GA::mutation()
 			int pos = random(0, (int)data[i].x.size() - 1);
 			data[i].x[pos] += random(varMin[pos] * random(0, genomMutationRate), varMax[pos] * random(0, genomMutationRate));
 #else
-			for (int j = 0; j < data[i].x.size(); j++)
+			for (int j = 0; j < data[i].num.size(); j++)
 			{
 				if (random(0.0, 1.0) <= genomMutationRate)
-					data[i].x[j] = random(varMin[j], varMax[j]);
+					data[i].num[j] = random(varMin[j], varMax[j]);
 			}
 #endif
 		}
@@ -127,23 +192,23 @@ void GA::calcResult(bool enableSort)
 
 	for (int i = 0; i < data.size(); i++)
 	{
-		data[i].functionValue = std::sin(data[i].x[0] + data[i].x[1]) + std::pow((data[i].x[0] - data[i].x[1]), 2.0) - 1.5*data[i].x[0] + 2.5*data[i].x[1] + 1;//与えられた関数
+		data[i].functionValue = std::sin(data[i].num[0] + data[i].num[1]) + std::pow((data[i].num[0] - data[i].num[1]), 2.0) - 1.5*data[i].num[0] + 2.5*data[i].num[1] + 1;//与えられた関数
 
 		if (data[maxNum].functionValue < data[i].functionValue)//座標の中で最も関数が大きいやつを検索
 			maxNum = i;
 	}
 	double seg = data[maxNum].functionValue;//評価関数の切片を与えられた関数が最も大きいやつにセット
-	double seg2 = searchRank(data[0].x.size() - 2).functionValue - seg;
+	double seg2 = searchRank(data[0].num.size() - 2).functionValue - seg;
 	resultSumValue = 0;
-	double coefficient = 0.001 / data[0].x.size();//評価関数用の定数
+	double coefficient = 0.001 / data[0].num.size();//評価関数用の定数
 
 	for (int i = 0; i < data.size(); i++)
 	{
 		bool flag = true;
 
-		for (int j = 0; j < data[i].x.size(); j++)
+		for (int j = 0; j < data[i].num.size(); j++)
 		{
-			if (data[i].x[j] > varMax[j] || data[i].x[j] < varMin[j])//座標が場外にいるやつの処理
+			if (data[i].num[j] > varMax[j] || data[i].num[j] < varMin[j])//座標が場外にいるやつの処理
 				flag = false;
 		}
 		data[i].result = seg2 == 0 ? 0 : (data[i].functionValue - seg) / seg2 / coefficient;//与えられた関数の値から切片で設定した値を引いて2乗する→与えられた関数の値が小さいやつが強くなる
@@ -191,9 +256,9 @@ void GA::displayValues(bool enableOneLine)
 
 	for (int i = 0; i < data_temp.size(); i++)
 	{
-		for (int j = 0; j < data_temp[i].x.size(); j++)
+		for (int j = 0; j < data_temp[i].num.size(); j++)
 		{
-			printf_s("%10.7lf,", data_temp[i].x[j]);//デバッグ用
+			printf_s("%10.7lf,", data_temp[i].num[j]);//デバッグ用
 		}
 		printf_s(" \t f(x,y)=%10.7lf\t Result=%10.7lf\n", data_temp[i].functionValue, data_temp[i].result);
 	}
