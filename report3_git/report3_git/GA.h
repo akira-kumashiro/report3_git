@@ -12,10 +12,10 @@
 class GA
 {
 private:
-	double individualMutationRate = 0.05;//個体突然変異率
-	double genomMutationRate = 0.1;
-	double alpha = 0.3;
-	std::vector<double> varMax, varMin;//変数の最小値・最大値
+	double individualMutationRate = 0.5;//個体突然変異率
+	double genomMutationRate = 1;
+	//double alpha = 1;
+	//std::vector<double> varMax, varMin;//変数の最小値・最大値
 	bool isChanged = false;
 public:
 	double resultSumValue;//評価関数の合計
@@ -27,16 +27,17 @@ public:
 		double functionValue;//与えられた関数の値
 		double result;
 
-		Data(int _var_num)//コンストラクタ
+		Data(int _var_num)://コンストラクタ
+			num(std::vector<int>(_var_num,-1))
 		{
-			num.resize(_var_num);//isIncludedの配列の長さの設定
+			//num.resize(_var_num);//isIncludedの配列の長さの設定
 		}
 	};
 
 	class CityData
 	{
 	public:
-		int cityNum;
+		//int cityNum;
 		std::vector<double> point;
 
 		CityData(int _point_dim)
@@ -50,7 +51,7 @@ public:
 	std::vector<CityData> model;
 	GA(int _max_genom_list, int _var_num, std::vector<GA::CityData> model);	//コンストラクタ
 	bool selection();//選択
-	void blxAlphaCrossover();
+	//void blxAlphaCrossover();
 	void pmxCrossover();
 	void mutation();//突然変異
 	void calc(bool enableDisplay, bool enableOneLine = false);//評価関数の計算
@@ -62,6 +63,7 @@ private:
 	double random(double min, double max);
 	void displayValues(bool enableOneLine);
 	Data searchRank(int num);
+	void setEmptyNum(void);
 public:
 	~GA();//デコンストラクタ
 };

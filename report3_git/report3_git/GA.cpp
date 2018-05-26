@@ -8,13 +8,14 @@ GA::GA(int _max_genom_list, int _var_num, std::vector<GA::CityData> _model) :
 	//もらった変数をクラス内変数に格納
 	model = _model;
 
-	for (int i = 0; i < data.size(); i++)
+	/*for (int i = 0; i < data.size(); i++)
 	{
 		for (int j = 0; j < data[i].num.size(); j++)
 		{
 			data[i].num[j] = random(varMin[j], varMax[j]);//遺伝子の初期設定
 		}
-	}
+	}*/
+	setEmptyNum();
 	prev_data = data;
 	calcResult();
 
@@ -47,7 +48,7 @@ bool GA::selection()
 	return ret;
 }
 
-void GA::blxAlphaCrossover()
+/*void GA::blxAlphaCrossover()
 {
 	prev_data = data;
 
@@ -62,7 +63,7 @@ void GA::blxAlphaCrossover()
 			data[i + 1].num[j] = random(ave - length * (1 / 2 + alpha), ave + length * (1 / 2 + alpha));
 		}
 	}
-}
+}*/
 
 void GA::pmxCrossover()
 {
@@ -74,8 +75,6 @@ void GA::pmxCrossover()
 	//Step1
 	for (int i = 0; i < data.size(); i += 2)//2個ずつ交叉
 	{
-
-		//for (int j = del1; j < del2; j++)
 		for (int j = 0; j < data[i].num.size(); j++)
 		{
 			if (j<del1 || j>del2)
@@ -105,6 +104,7 @@ void GA::pmxCrossover()
 					if (prev_data[i].num[j] == data[i].num[k])
 					{
 						isIncluded = true;
+						break;
 					}
 				}
 				if (!isIncluded)
@@ -112,12 +112,11 @@ void GA::pmxCrossover()
 					data[i].num[j] = prev_data[i].num[j];
 				}
 			}
-}
+		}
 	}
 	//Steo3
-	for (int i = 0; i < data.size(); i++)
+	/*for (int i = 0; i < data.size(); i++)
 	{
-		int emptyNum = 0;
 		std::vector<int> noPlacedCity, noPlacedCityTemp;
 		for (int j = 0; j < data[i].num.size(); j++)
 		{
@@ -126,13 +125,18 @@ void GA::pmxCrossover()
 
 		for (int j = 0; j < data[i].num.size(); j++)
 		{
-			if (data[i].num[j] == -1)
+			if (data[i].num[j] != -1)
 			{
-				emptyNum++;
+				noPlacedCity[j] = -1;
 			}
-			else
+		}
+
+		for (int j = 0; j < data[i].num.size(); j++)
+		{
+			if (noPlacedCity[j] == -1)
 			{
 				noPlacedCity.erase(noPlacedCity.begin() + j);
+				j--;
 			}
 		}
 		noPlacedCityTemp = noPlacedCity;
@@ -143,7 +147,17 @@ void GA::pmxCrossover()
 			noPlacedCity[j] = noPlacedCityTemp[point];
 			noPlacedCityTemp.erase(noPlacedCityTemp.begin() + point);
 		}
-	}
+
+		for (int j = 0; j < data[i].num.size(); j++)
+		{
+			int point = 0;
+			if (data[i].num[j] == -1)
+			{
+				data[i].num[j] = noPlacedCity[point];
+			}
+		}
+	}*/
+	setEmptyNum();
 }
 
 void GA::mutation()
@@ -154,16 +168,17 @@ void GA::mutation()
 		{
 #ifdef __ENABLE_SINGLE_POINT_MUTATION__
 			int pos = random(0, (int)data[i].x.size() - 1);
-			data[i].x[pos] += random(varMin[pos] * random(0, genomMutationRate), varMax[pos] * random(0, genomMutationRate));
+			data[i].num[pos] = -1;
 #else
 			for (int j = 0; j < data[i].num.size(); j++)
 			{
 				if (random(0.0, 1.0) <= genomMutationRate)
-					data[i].num[j] = random(varMin[j], varMax[j]);
+					data[i].num[j] = -1;
 			}
 #endif
 		}
 	}
+	setEmptyNum();
 }
 
 void GA::calc(bool enableDisplay, bool enableOneLine)
@@ -175,9 +190,9 @@ void GA::calc(bool enableDisplay, bool enableOneLine)
 		if (data[i].result < data[minNum].result)
 			minNum = i;
 	}
-	if (searchRank(0).functionValue - eliteData.functionValue > 0.00001)
-		isChanged = true;
-	//評価関数が最もいいやつを保存
+	/*if (searchRank(0).functionValue - eliteData.functionValue > 1)
+		isChanged = true;*/
+		//評価関数が最もいいやつを保存
 	data[minNum] = eliteData;
 
 	calcResult();
@@ -192,7 +207,16 @@ void GA::calcResult(bool enableSort)
 
 	for (int i = 0; i < data.size(); i++)
 	{
-		data[i].functionValue = std::sin(data[i].num[0] + data[i].num[1]) + std::pow((data[i].num[0] - data[i].num[1]), 2.0) - 1.5*data[i].num[0] + 2.5*data[i].num[1] + 1;//与えられた関数
+		data[i].functionValue = 0;
+		for (int j = 0; j < data[i].num.size(); j++)
+		{
+			double temp = 0;
+			for (int k = 0; k < model[0].point.size(); k++)
+			{
+				temp += std::pow(model[data[i].num[j]].point[k] - model[data[i].num[j + 1 == data[i].num.size() ? 0 : j + 1]].point[k], 2.0);
+			}
+			data[i].functionValue += std::pow(temp, 0.5);
+		}
 
 		if (data[maxNum].functionValue < data[i].functionValue)//座標の中で最も関数が大きいやつを検索
 			maxNum = i;
@@ -204,18 +228,8 @@ void GA::calcResult(bool enableSort)
 
 	for (int i = 0; i < data.size(); i++)
 	{
-		bool flag = true;
-
-		for (int j = 0; j < data[i].num.size(); j++)
-		{
-			if (data[i].num[j] > varMax[j] || data[i].num[j] < varMin[j])//座標が場外にいるやつの処理
-				flag = false;
-		}
 		data[i].result = seg2 == 0 ? 0 : (data[i].functionValue - seg) / seg2 / coefficient;//与えられた関数の値から切片で設定した値を引いて2乗する→与えられた関数の値が小さいやつが強くなる
-																							//data[i].result = std::abs(data[i].functionValue - seg);
 
-		if (!flag)//場外に出たやつの処理
-			data[i].result *= coefficient;
 		resultSumValue += data[i].result;
 	}
 	if (enableSort)
@@ -258,7 +272,7 @@ void GA::displayValues(bool enableOneLine)
 	{
 		for (int j = 0; j < data_temp[i].num.size(); j++)
 		{
-			printf_s("%10.7lf,", data_temp[i].num[j]);//デバッグ用
+			printf_s("%2d,", data_temp[i].num[j]);//デバッグ用
 		}
 		printf_s(" \t f(x,y)=%10.7lf\t Result=%10.7lf\n", data_temp[i].functionValue, data_temp[i].result);
 	}
@@ -269,6 +283,58 @@ GA::Data GA::searchRank(int num)//評価がいい順
 	std::vector<Data> data_temp = data;
 	std::sort(data_temp.begin(), data_temp.end(), [](const Data& x, const Data& y) { return x.functionValue < y.functionValue; });
 	return data_temp[num];
+}
+
+void GA::setEmptyNum(void)
+{
+	std::vector<int> cityTemp(data[0].num.size());
+	for (int i = 0; i < data[0].num.size(); i++)
+	{
+		cityTemp[i] = i;
+	}
+
+	for (int i = 0; i < data.size(); i++)
+	{
+		std::vector<int> noPlacedCity, noPlacedCityTemp;
+		noPlacedCity = cityTemp;
+
+		for (int j = 0; j < data[i].num.size(); j++)
+		{
+			if (data[i].num[j] != -1)
+			{
+				noPlacedCity[data[i].num[j]] = -1;
+			}
+		}
+
+		for (int j = 0; j < data[i].num.size(); j++)
+		{
+			if (noPlacedCity.size() <= j)
+			{
+				break;
+			}
+			else if (noPlacedCity[j] == -1)
+			{
+				noPlacedCity.erase(noPlacedCity.begin() + j);
+				j--;
+			}
+		}
+		noPlacedCityTemp = noPlacedCity;
+
+		for (int j = 0; j < noPlacedCity.size(); j++)
+		{
+			int point = random(0, (int)noPlacedCityTemp.size() - 1);
+			noPlacedCity[j] = noPlacedCityTemp[point];
+			noPlacedCityTemp.erase(noPlacedCityTemp.begin() + point);
+		}
+
+		for (int j = 0, point = 0; j < data[i].num.size(); j++)
+		{
+			if (data[i].num[j] == -1)
+			{
+				data[i].num[j] = noPlacedCity[point++];
+			}
+		}
+	}
 }
 
 GA::~GA()
