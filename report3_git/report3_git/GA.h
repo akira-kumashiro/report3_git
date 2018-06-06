@@ -14,9 +14,9 @@ class GA
 private:
 	double individualMutationRate = 0.5;//個体突然変異率
 	double genomMutationRate = 1;
-	//double alpha = 1;
-	//std::vector<double> varMax, varMin;//変数の最小値・最大値
 	bool isChanged = false;
+	double alpha = 1;
+	int localMinNum = 0;
 public:
 	double resultSumValue;//評価関数の合計
 
@@ -27,31 +27,30 @@ public:
 		double functionValue;//与えられた関数の値
 		double result;
 
-		Data(int _var_num)://コンストラクタ
-			num(std::vector<int>(_var_num,-1))
+		Data(int _var_num) ://コンストラクタ
+			num(std::vector<int>(_var_num, -1))
 		{
-			//num.resize(_var_num);//isIncludedの配列の長さの設定
+
 		}
 	};
 
-	class CityData
+	class PointXY
 	{
 	public:
-		//int cityNum;
 		std::vector<double> point;
 
-		CityData(int _point_dim)
+		PointXY(double _x, double _y) :
+			point(std::vector<double>{_x, _y})
 		{
-			point.resize(_point_dim);
+
 		}
 	};
 
 	std::vector<Data> data, prev_data;//操作前後で値を保持するために2個
 	Data eliteData;
-	std::vector<CityData> model;
-	GA(int _max_genom_list, int _var_num, std::vector<GA::CityData> model);	//コンストラクタ
+	std::vector<PointXY> model;
+	GA(int _max_genom_list, int _var_num, std::vector<GA::PointXY> model);	//コンストラクタ
 	bool selection();//選択
-	//void blxAlphaCrossover();
 	void pmxCrossover();
 	void mutation();//突然変異
 	void calc(bool enableDisplay, bool enableOneLine = false);//評価関数の計算
