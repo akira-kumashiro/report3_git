@@ -3,15 +3,19 @@
 
 GA::GA(int _max_genom_list, int _var_num, std::vector<GA::PointXY> _model) :
 	data(std::vector<Data>(_max_genom_list, _var_num)),//data‚Ì‰Šú‰»
-	eliteData(_var_num)
+	eliteData(_var_num),
+	cityTemp(_var_num)
 {
 	//‚à‚ç‚Á‚½•Ï”‚ğƒNƒ‰ƒX“à•Ï”‚ÉŠi”[
 	model = _model;
 
-	for (int i = 0; i < data.size(); i++)
+	/*for (int i = 0; i < data.size(); i++)
 	{
 		data[i].num[0] = 0;//ˆâ“`q‚Ì‰Šúİ’è
-
+	}*/
+	for (int i = 0; i < data[0].num.size(); i++)
+	{
+		cityTemp[i] = i;
 	}
 	setEmptyNum();
 	prev_data = data;
@@ -50,20 +54,20 @@ void GA::pmxCrossover()
 {
 	prev_data = data;
 
-	int del1 = random(0, (int)data[0].num.size() - 1);
-	int del2 = random(del1, (int)data[0].num.size());
+
 
 	//Step1
 	for (int i = 0; i < data.size(); i += 2)//2ŒÂ‚¸‚ÂŒğ³
 	{
-		data[i].num[0] = 0;
-		data[i + 1].num[0] = 0;
-		for (int j = 1; j < data[i].num.size(); j++)
+		int del1 = random(0, (int)data[0].num.size() - 1);
+		int del2 = random(del1, (int)data[0].num.size());
+		/*data[i].num[0] = 0;
+		data[i + 1].num[0] = 0;*/
+		for (int j = 0; j < data[i].num.size(); j++)
 		{
 			if (j<del1 || j>del2)
 			{
 				data[i].num[j] = -1;
-
 				data[i + 1].num[j] = -1;
 			}
 			else
@@ -91,9 +95,7 @@ void GA::pmxCrossover()
 					}
 				}
 				if (!isIncluded)
-				{
 					data[i].num[j] = prev_data[i].num[j];
-				}
 			}
 		}
 	}
@@ -111,14 +113,14 @@ void GA::mutation()
 			int pos = random(0, (int)data[i].x.size() - 1);
 			data[i].num[pos] = -1;
 #else
-			for (int j = 1; j < data[i].num.size(); j++)
+			for (int j = 0; j < data[i].num.size(); j++)
 			{
 				if (random(0.0, 1.0) <= genomMutationRate)
 					data[i].num[j] = -1;
 			}
 #endif
-		}
 	}
+}
 	setEmptyNum();
 }
 
@@ -143,7 +145,7 @@ void GA::calc(bool enableDisplay, bool enableOneLine)
 		if (!isChanged)
 		{
 			localMinNum++;
-			if (localMinNum > 50)
+			if (localMinNum > 20)
 			{
 				alpha += 1;
 				localMinNum = 0;
@@ -157,8 +159,6 @@ void GA::calc(bool enableDisplay, bool enableOneLine)
 
 	if (enableDisplay)
 		displayValues(enableOneLine);
-	//else
-		//displayValues(true);
 }
 
 void GA::calcResult(bool enableSort)
@@ -199,13 +199,14 @@ void GA::calcResult(bool enableSort)
 	for (int i = 0; i < data.size(); i++)
 	{
 		//data[i].result = std::exp(-data[i].functionValue*alpha*coefficient) / coefficient;
-		data[i].result = seg2 == 0 ? 0 : (data[i].functionValue - seg) / seg2 / coefficient;//—^‚¦‚ç‚ê‚½ŠÖ”‚Ì’l‚©‚çØ•Ğ‚Åİ’è‚µ‚½’l‚ğˆø‚¢‚Ä2æ‚·‚é¨—^‚¦‚ç‚ê‚½ŠÖ”‚Ì’l‚ª¬‚³‚¢‚â‚Â‚ª‹­‚­‚È‚é
-		if (model[data[i].num[1]].point[0] - model[data[i].num[0]].point[0] > 0)
+		//data[i].result = seg2 == 0 ? 0 : (data[i].functionValue - seg) / seg2 / coefficient;//—^‚¦‚ç‚ê‚½ŠÖ”‚Ì’l‚©‚çØ•Ğ‚Åİ’è‚µ‚½’l‚ğˆø‚¢‚Ä2æ‚·‚é¨—^‚¦‚ç‚ê‚½ŠÖ”‚Ì’l‚ª¬‚³‚¢‚â‚Â‚ª‹­‚­‚È‚é
+		data[i].result = 1 / std::pow(data[i].functionValue, 2.0);
+		/*if (model[data[i].num[1]].point[0] - model[data[i].num[0]].point[0] > 0)
 		{
 			data[i].result *= (1 + coefficient * 100);
 			if (model[data[i].num[1]].point[1] - model[data[i].num[0]].point[1] > 0)
 				data[i].result *= (1 + coefficient * 100);
-		}
+		}*/
 		resultSumValue += data[i].result;
 	}
 	if (enableSort)
@@ -252,17 +253,6 @@ void GA::displayValues(bool enableOneLine)
 		}
 		printf_s(" \t f(x,y)=%10.7lf\t Result=%10.7lf\n", data_temp[i].functionValue, data_temp[i].result);
 	}
-#ifdef _DEBUG
-	for (int i = 0; i < data_temp.size(); i++)
-	{
-		for (int j = 0; j < data_temp[i].num.size(); j++)
-		{
-			_RPTN(_CRT_WARN, "%2d,", data_temp[i].num[j]);//ƒfƒoƒbƒO—p
-		}
-		_RPTN(_CRT_WARN, " \t f(x,y)=%10.7lf\t Result=%10.7lf\n", data_temp[i].functionValue, data_temp[i].result);
-	}
-#endif // _DEBUG
-
 }
 
 GA::Data GA::searchRank(int num)//•]‰¿‚ª‚¢‚¢‡
@@ -274,12 +264,6 @@ GA::Data GA::searchRank(int num)//•]‰¿‚ª‚¢‚¢‡
 
 void GA::setEmptyNum(void)
 {
-	std::vector<int> cityTemp(data[0].num.size());
-	for (int i = 0; i < data[0].num.size(); i++)
-	{
-		cityTemp[i] = i;
-	}
-
 	for (int i = 0; i < data.size(); i++)
 	{
 		std::vector<int> noPlacedCity, noPlacedCityTemp;
@@ -288,24 +272,15 @@ void GA::setEmptyNum(void)
 		for (int j = 0; j < data[i].num.size(); j++)
 		{
 			if (data[i].num[j] != -1)
-			{
 				noPlacedCity[data[i].num[j]] = -1;
-			}
 		}
 
-		for (int j = 0; j < data[i].num.size(); j++)
+		for (int j = 0; j < noPlacedCity.size(); j++)
 		{
-			if (noPlacedCity.size() <= j)
-			{
-				break;
-			}
-			else if (noPlacedCity[j] == -1)
-			{
-				noPlacedCity.erase(noPlacedCity.begin() + j);
-				j--;
-			}
+			if (noPlacedCity[j] != -1)
+				noPlacedCityTemp.push_back(noPlacedCity[j]);
 		}
-		noPlacedCityTemp = noPlacedCity;
+		noPlacedCity = noPlacedCityTemp;
 
 		for (int j = 0; j < noPlacedCity.size(); j++)
 		{
@@ -317,9 +292,7 @@ void GA::setEmptyNum(void)
 		for (int j = 0, point = 0; j < data[i].num.size(); j++)
 		{
 			if (data[i].num[j] == -1)
-			{
 				data[i].num[j] = noPlacedCity[point++];
-			}
 		}
 	}
 }
