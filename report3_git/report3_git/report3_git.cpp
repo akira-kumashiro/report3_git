@@ -42,9 +42,6 @@
 
 int main()
 {
-	//double varX[] = { 1150.0,630.0,40.0,750.0,750.0,1030.0,1650.0,1490.0,790.0,710.0,840.0,1170.0,970.0,510.0,750.0,1280.0,230.0,460.0,1040.0,590.0 , 830.0 , 490.0 ,1840.0 ,  1260.0 ,  1280.0 ,    490.0 , 1460.0 ,  1260.0 , 	  360.0 , };
-	//double varY[] = { 1760.0,1660.0,2090.0,1100.0,2030.0,2070.0, 650.0,1630.0,2260.0, 1310.0, 550.0, 2300.0,1340.0,  700.0,900.0,1200.0,  590.0,860.0, 950.0,1390.0, 1770.0,  500.0,1240.0,1500.0,790.0, 2130.0,1420.0,1910.0,1980.0 };
-
 	std::vector<GA::PointXY> cityData{
 		GA::PointXY(1150.0,1760.0),
 		GA::PointXY(630.0,1660.0),
@@ -76,16 +73,7 @@ int main()
 		GA::PointXY(1260.0,1910.0),
 		GA::PointXY(360.0,1980.0)
 	};
-
-	//std::vector<GA::PointXY> cityData(VAR_NUM, 2);
-
-	/*for (int i = 0; i < VAR_NUM; i++)
-	{
-		//cityData[i].cityNum = i;
-		cityData[i].point[0] = varX[i];
-		cityData[i].point[1] = varY[i];
-	}*/
-
+	
 	//遺伝的アルゴリズム諸関数をまとめたクラスの宣言
 	std::vector<GA> ga(4, GA(MAX_GENOM_LIST, cityData.size(), cityData));
 	GA gaJointed(MAX_GENOM_LIST * 2, cityData.size(), cityData);
@@ -109,11 +97,9 @@ int main()
 			{
 				ga[i].calc(false);//評価関数の計算
 			}
-
-			_RPTN(_CRT_WARN, "i=%d\n", j);
 		}
 		ga[i].calcResult(true);
-		for (int j = 0; j < MAX_GENOM_LIST / 2; j++)
+		for (int j = 0; j < MAX_GENOM_LIST / 2; j++)//上位半分を結合クラスに
 		{
 			gaJointed.data[j + MAX_GENOM_LIST * i] = ga[i].data[j];
 		}
@@ -138,8 +124,6 @@ int main()
 		{
 			gaJointed.calc(false);//評価関数の計算
 		}
-
-		_RPTN(_CRT_WARN, "i=%d\n", i);
 	}
 
 	while (1)
