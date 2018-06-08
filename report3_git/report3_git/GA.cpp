@@ -50,8 +50,6 @@ void GA::pmxCrossover()
 {
 	prev_data = data;
 
-
-
 	//Step1
 	for (int i = 0; i < data.size(); i += 2)//2個ずつ交叉
 	{
@@ -102,7 +100,6 @@ void GA::mutation()
 	genNum += 0.001;
 	individualMutationRate = individualMutationRate / std::log(genNum);
 
-
 	for (int i = 0; i < data.size(); i++)
 	{
 		if (random(0.0, 1.0) <= individualMutationRate)//個体突然変異率の計算
@@ -110,23 +107,26 @@ void GA::mutation()
 #ifdef __ENABLE_SINGLE_POINT_MUTATION__
 			int pos = random(0, (int)data[i].x.size() - 1);
 			data[i].num[pos] = -1;
+#elif __ENABLE_DOUBLE_POINT_MUTATION__
+			int del1 = random(0, (int)data[i].num.size() - 1);
+			int del2 = random(0, (int)data[i].num.size() - 1);
+			
+			data[i].num[del1] = -1;
+			data[i].num[del2] = -1;
+#elif __ENABLE_SEGMENTAL_MUTATION__
+			int del1 = random(0, (int)data[i].num.size() - 1);
+			int del2 = random(del1, (int)data[i].num.size());
+			
+			for (int j = del1; j < del2; j++)
+			{
+				data[i].num[j] = -1;
+			}
 #else
-			/*for (int j = 0; j < data[i].num.size(); j++)
+			for (int j = 0; j < data[i].num.size(); j++)
 			{
 				if (random(0.0, 1.0) <= genomMutationRate)
 					data[i].num[j] = -1;
-			}*/
-			int del1 = random(0, (int)data[i].num.size() - 1);
-			int del2 = random(del1, (int)data[i].num.size());
-			/*for (int j = del1; j < del2; j++)
-			{
-				data[i].num[j] = -1;
-			}*/
-			//int pos1 = data[i].num[del1];
-			//int pos2 = data[i].num[del2];
-
-			data[i].num[del1] = -1;
-			data[i].num[del2] = -1;
+			}
 #endif
 		}
 	}
