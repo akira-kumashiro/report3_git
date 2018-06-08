@@ -2,11 +2,11 @@
 #include "GA.h"
 
 GA::GA(int _max_genom_list, int _var_num, std::vector<GA::PointXY> _model) :
-	data(std::vector<Data>(_max_genom_list, _var_num)),//data‚Ì‰Šú‰»
+	data(std::vector<Data>(_max_genom_list, _var_num)),//dataã®åˆæœŸåŒ–
 	eliteData(_var_num),
 	cityTemp(_var_num)
 {
-	//‚à‚ç‚Á‚½•Ï”‚ğƒNƒ‰ƒX“à•Ï”‚ÉŠi”[
+	//ã‚‚ã‚‰ã£ãŸå¤‰æ•°ã‚’ã‚¯ãƒ©ã‚¹å†…å¤‰æ•°ã«æ ¼ç´
 	model = _model;
 	for (int i = 0; i < data[0].num.size(); i++)
 	{
@@ -25,7 +25,7 @@ GA::GA(std::vector<Data> _data, std::vector<GA::PointXY> _model) :
 	eliteData(_data[0].num.size()),
 	cityTemp(_data[0].num.size())
 {
-	//‚à‚ç‚Á‚½•Ï”‚ğƒNƒ‰ƒX“à•Ï”‚ÉŠi”[
+	//ã‚‚ã‚‰ã£ãŸå¤‰æ•°ã‚’ã‚¯ãƒ©ã‚¹å†…å¤‰æ•°ã«æ ¼ç´
 	model = _model;
 
 	for (int i = 0; i < data[0].num.size(); i++)
@@ -40,20 +40,20 @@ GA::GA(std::vector<Data> _data, std::vector<GA::PointXY> _model) :
 
 bool GA::selection()
 {
-	int max_num = 0;//Å‚à•]‰¿‚Ì—Ç‚¢ŒÂ‘Ì‚Ì”Ô†
-	bool ret = isChanged;//Å‚à•]‰¿‚Ì—Ç‚¢ŒÂ‘Ì‚Ì•Ï‰»‚ÌŠÄ‹(ƒfƒoƒbƒO—p)
+	int max_num = 0;//æœ€ã‚‚è©•ä¾¡ã®è‰¯ã„å€‹ä½“ã®ç•ªå·
+	bool ret = isChanged;//æœ€ã‚‚è©•ä¾¡ã®è‰¯ã„å€‹ä½“ã®å¤‰åŒ–ã®ç›£è¦–(ãƒ‡ãƒãƒƒã‚°ç”¨)
 	isChanged = false;
 
-	eliteData = searchRank(0);//Å‚à•]‰¿‚Ì—Ç‚¢ŒÂ‘Ì‚ğ•Û
+	eliteData = searchRank(0);//æœ€ã‚‚è©•ä¾¡ã®è‰¯ã„å€‹ä½“ã‚’ä¿æŒ
 	prev_data = data;
 	for (int i = 0; i < data.size(); i++)
 	{
-		double selector = random(0.0, 1.0);//—”‚ğ¶¬
-		double needle = 0;//ƒ‹[ƒŒƒbƒg‚Ìj‚ğ¶¬
+		double selector = random(0.0, 1.0);//ä¹±æ•°ã‚’ç”Ÿæˆ
+		double needle = 0;//ãƒ«ãƒ¼ãƒ¬ãƒƒãƒˆã®é‡ã‚’ç”Ÿæˆ
 		int j = 0;
 		for (; ; j++)
 		{
-			needle += (prev_data[j].result / resultSumValue);//ƒ‹[ƒŒƒbƒg‚Ìj‚ğ—”‚Ì’l‚Ü‚Åi‚ß‚é
+			needle += (prev_data[j].result / resultSumValue);//ãƒ«ãƒ¼ãƒ¬ãƒƒãƒˆã®é‡ã‚’ä¹±æ•°ã®å€¤ã¾ã§é€²ã‚ã‚‹
 			if (needle > selector)
 				break;
 			if (j == (data.size() - 1))
@@ -71,7 +71,7 @@ void GA::pmxCrossover()
 
 
 	//Step1
-	for (int i = 0; i < data.size(); i += 2)//2ŒÂ‚¸‚ÂŒğ³
+	for (int i = 0; i < data.size(); i += 2)//2å€‹ãšã¤äº¤å‰
 	{
 		int del1 = random(0, (int)data[0].num.size() - 1);
 		int del2 = random(del1, (int)data[0].num.size());
@@ -125,7 +125,7 @@ void GA::mutation()
 
 	for (int i = 0; i < data.size(); i++)
 	{
-		if (random(0.0, 1.0) <= individualMutationRate)//ŒÂ‘Ì“Ë‘R•ÏˆÙ—¦‚ÌŒvZ
+		if (random(0.0, 1.0) <= individualMutationRate)//å€‹ä½“çªç„¶å¤‰ç•°ç‡ã®è¨ˆç®—
 		{
 #ifdef __ENABLE_SINGLE_POINT_MUTATION__
 			int pos = random(0, (int)data[i].x.size() - 1);
@@ -156,7 +156,7 @@ void GA::calc(bool enableDisplay, bool enableOneLine)
 {
 	int minNum = 0;
 	calcResult();
-	for (int i = 0; i < data.size(); i++)//•]‰¿ŠÖ”‚ªÅ¬‚Ì“z‚ğŒŸõ
+	for (int i = 0; i < data.size(); i++)//è©•ä¾¡é–¢æ•°ãŒæœ€å°ã®å¥´ã‚’æ¤œç´¢
 	{
 		if (data[i].result < data[minNum].result)
 			minNum = i;
@@ -180,8 +180,9 @@ void GA::calc(bool enableDisplay, bool enableOneLine)
 			}
 		}
 	}
-	//•]‰¿ŠÖ”‚ªÅ‚à‚¢‚¢‚â‚Â‚ğ•Û‘¶
-	data[minNum] = eliteData;
+	//è©•ä¾¡é–¢æ•°ãŒæœ€ã‚‚ã„ã„ã‚„ã¤ã‚’ä¿å­˜
+	if(data[minNum].result < eliteData.result)
+		data[minNum] = eliteData;
 
 	calcResult();
 
@@ -218,18 +219,18 @@ void GA::calcResult(bool enableSort)
 			data[i].functionValue += std::pow(temp, 0.5);
 		}
 
-		if (data[maxNum].functionValue < data[i].functionValue)//À•W‚Ì’†‚ÅÅ‚àŠÖ”‚ª‘å‚«‚¢‚â‚Â‚ğŒŸõ
+		if (data[maxNum].functionValue < data[i].functionValue)//åº§æ¨™ã®ä¸­ã§æœ€ã‚‚é–¢æ•°ãŒå¤§ãã„ã‚„ã¤ã‚’æ¤œç´¢
 			maxNum = i;
 	}
-	double seg = data[maxNum].functionValue;//•]‰¿ŠÖ”‚ÌØ•Ğ‚ğ—^‚¦‚ç‚ê‚½ŠÖ”‚ªÅ‚à‘å‚«‚¢‚â‚Â‚ÉƒZƒbƒg
+	double seg = data[maxNum].functionValue;//è©•ä¾¡é–¢æ•°ã®åˆ‡ç‰‡ã‚’ä¸ãˆã‚‰ã‚ŒãŸé–¢æ•°ãŒæœ€ã‚‚å¤§ãã„ã‚„ã¤ã«ã‚»ãƒƒãƒˆ
 	double seg2 = searchRank(data[0].num.size() - 2).functionValue - seg;
 	resultSumValue = 0;
-	double coefficient = 0.001 / data[0].num.size();//•]‰¿ŠÖ”—p‚Ì’è”
+	double coefficient = 0.001 / data[0].num.size();//è©•ä¾¡é–¢æ•°ç”¨ã®å®šæ•°
 
 	for (int i = 0; i < data.size(); i++)
 	{
 		//data[i].result = std::exp(-data[i].functionValue*alpha*coefficient) / coefficient;
-		//data[i].result = seg2 == 0 ? 0 : (data[i].functionValue - seg) / seg2 / coefficient;//—^‚¦‚ç‚ê‚½ŠÖ”‚Ì’l‚©‚çØ•Ğ‚Åİ’è‚µ‚½’l‚ğˆø‚¢‚Ä2æ‚·‚é¨—^‚¦‚ç‚ê‚½ŠÖ”‚Ì’l‚ª¬‚³‚¢‚â‚Â‚ª‹­‚­‚È‚é
+		//data[i].result = seg2 == 0 ? 0 : (data[i].functionValue - seg) / seg2 / coefficient;//ä¸ãˆã‚‰ã‚ŒãŸé–¢æ•°ã®å€¤ã‹ã‚‰åˆ‡ç‰‡ã§è¨­å®šã—ãŸå€¤ã‚’å¼•ã„ã¦2ä¹—ã™ã‚‹â†’ä¸ãˆã‚‰ã‚ŒãŸé–¢æ•°ã®å€¤ãŒå°ã•ã„ã‚„ã¤ãŒå¼·ããªã‚‹
 		data[i].result = 1 / std::pow(data[i].functionValue, 0.5);
 		//data[i].result = 1 / data[i].functionValue;
 		/*if (model[data[i].num[1]].point[0] - model[data[i].num[0]].point[0] > 0)
@@ -246,7 +247,7 @@ void GA::calcResult(bool enableSort)
 
 int GA::random(int min, int max)
 {
-	//—”‚Ìİ’è
+	//ä¹±æ•°ã®è¨­å®š
 	std::random_device rnd;
 	std::mt19937 engine(rnd());
 	std::uniform_int_distribution<int> distribution(min, max);
@@ -280,13 +281,13 @@ void GA::displayValues(bool enableOneLine)
 	{
 		for (int j = 0; j < data_temp[i].num.size(); j++)
 		{
-			printf_s("%2d,", data_temp[i].num[j]);//ƒfƒoƒbƒO—p
+			printf_s("%2d,", data_temp[i].num[j]);//ãƒ‡ãƒãƒƒã‚°ç”¨
 		}
 		printf_s(" \t f(x,y)=%10.7lf\t Result=%10.7lf\n", data_temp[i].functionValue, data_temp[i].result);
 	}
 }
 
-GA::Data GA::searchRank(int num)//•]‰¿‚ª‚¢‚¢‡
+GA::Data GA::searchRank(int num)//è©•ä¾¡ãŒã„ã„é †
 {
 	std::vector<Data> data_temp = data;
 	std::sort(data_temp.begin(), data_temp.end(), [](const Data& x, const Data& y) { return x.functionValue < y.functionValue; });
