@@ -8,16 +8,30 @@ GA::GA(int _max_genom_list, int _var_num, std::vector<GA::PointXY> _model) :
 {
 	//‚à‚ç‚Á‚½•Ï”‚ğƒNƒ‰ƒX“à•Ï”‚ÉŠi”[
 	model = _model;
-
-	/*for (int i = 0; i < data.size(); i++)
-	{
-		data[i].num[0] = 0;//ˆâ“`q‚Ì‰Šúİ’è
-	}*/
 	for (int i = 0; i < data[0].num.size(); i++)
 	{
 		cityTemp[i] = i;
 	}
 	setEmptyNum();
+	prev_data = data;
+	calcResult();
+
+	displayValues(false);
+
+}
+
+GA::GA(std::vector<Data> _data, std::vector<GA::PointXY> _model) :
+	data(_data),
+	eliteData(_data[0].num.size()),
+	cityTemp(_data[0].num.size())
+{
+	//‚à‚ç‚Á‚½•Ï”‚ğƒNƒ‰ƒX“à•Ï”‚ÉŠi”[
+	model = _model;
+
+	for (int i = 0; i < data[0].num.size(); i++)
+	{
+		cityTemp[i] = i;
+	}
 	prev_data = data;
 	calcResult();
 
@@ -105,8 +119,8 @@ void GA::pmxCrossover()
 
 void GA::mutation()
 {
-	/*genNum++;
-	individualMutationRate = individualMutationRate / std::log(genNum/10);*/
+	genNum += 0.001;
+	individualMutationRate = individualMutationRate / std::log(genNum);
 
 
 	for (int i = 0; i < data.size(); i++)
@@ -134,9 +148,8 @@ void GA::mutation()
 			data[i].num[del1] = -1;
 			data[i].num[del2] = -1;
 #endif
+		}
 	}
-}
-	setEmptyNum();
 }
 
 void GA::calc(bool enableDisplay, bool enableOneLine)
@@ -179,6 +192,8 @@ void GA::calc(bool enableDisplay, bool enableOneLine)
 void GA::calcResult(bool enableSort)
 {
 	int maxNum = 0;
+
+	setEmptyNum();
 
 	for (int i = 0; i < data.size(); i++)
 	{

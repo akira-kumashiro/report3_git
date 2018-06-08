@@ -12,7 +12,7 @@
 class GA
 {
 private:
-	double individualMutationRate = 0.8;//個体突然変異率
+	double individualMutationRate = 0.6;//個体突然変異率
 	double genomMutationRate = 0.5;
 	bool isChanged = false;
 	double alpha = 1;
@@ -51,18 +51,19 @@ public:
 	std::vector<Data> data, prev_data;//操作前後で値を保持するために2個
 	Data eliteData;
 	std::vector<PointXY> model;
-	GA(int _max_genom_list, int _var_num, std::vector<GA::PointXY> model);	//コンストラクタ
+	GA(int _max_genom_list, int _var_num, std::vector<GA::PointXY> _model);	//コンストラクタ
+	GA(std::vector<Data> _data, std::vector<GA::PointXY> _model);	//コンストラクタ
 	bool selection();//選択
 	void pmxCrossover();
 	void mutation();//突然変異
 	void calc(bool enableDisplay, bool enableOneLine = false);//評価関数の計算
+	void displayValues(bool enableOneLine);
 private:
 	void calcResult(bool enableSort = false);
 	int random(int min, int max);
 	double random(int min, double max);
 	double random(double min, int max);
 	double random(double min, double max);
-	void displayValues(bool enableOneLine);
 	Data searchRank(int num);
 	void setEmptyNum(void);
 public:
