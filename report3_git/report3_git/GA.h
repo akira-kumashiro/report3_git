@@ -8,6 +8,8 @@
 #include <cmath>
 
 //#define __ENABLE_SINGLE_POINT_MUTATION__
+#define __ENABLE_DOUBLE_POINT_MUTATION__
+//#define __ENABLE_SEGMENTAL_MUTATION__
 
 class GA
 {
