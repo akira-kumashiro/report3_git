@@ -20,24 +20,6 @@ GA::GA(int _max_genom_list, int _var_num, std::vector<GA::PointXY> _model) :
 
 }
 
-GA::GA(std::vector<Data> _data, std::vector<GA::PointXY> _model) :
-	data(_data),
-	eliteData(_data[0].num.size()),
-	cityTemp(_data[0].num.size())
-{
-	//もらった変数をクラス内変数に格納
-	model = _model;
-
-	for (int i = 0; i < data[0].num.size(); i++)
-	{
-		cityTemp[i] = i;
-	}
-	prev_data = data;
-	calcResult();
-
-	displayValues(false);
-}
-
 bool GA::selection()
 {
 	int max_num = 0;//最も評価の良い個体の番号
@@ -75,8 +57,6 @@ void GA::pmxCrossover()
 	{
 		int del1 = random(0, (int)data[0].num.size() - 1);
 		int del2 = random(del1, (int)data[0].num.size());
-		/*data[i].num[0] = 0;
-		data[i + 1].num[0] = 0;*/
 		for (int j = 0; j < data[i].num.size(); j++)
 		{
 			if (j<del1 || j>del2)
@@ -204,16 +184,6 @@ void GA::calcResult(bool enableSort)
 			double temp = 0;
 			for (int k = 0; k < model[data[i].num[j]].point.size(); k++)
 			{
-				/*double diff = model[data[i].num[j]].point[k];
-				if (j + 1 == data[i].num.size())
-				{
-					diff -= model[data[i].num[0]].point[k];
-				}
-				else
-				{
-					diff -= model[data[i].num[j + 1]].point[k];
-				}
-				temp += std::pow(diff, 2.0);*/
 				temp += std::pow(model[data[i].num[j]].point[k] - model[data[i].num[j + 1 == data[i].num.size() ? 0 : j + 1]].point[k], 2.0);
 			}
 			data[i].functionValue += std::pow(temp, 0.5);
@@ -233,12 +203,6 @@ void GA::calcResult(bool enableSort)
 		//data[i].result = seg2 == 0 ? 0 : (data[i].functionValue - seg) / seg2 / coefficient;//与えられた関数の値から切片で設定した値を引いて2乗する→与えられた関数の値が小さいやつが強くなる
 		data[i].result = 1 / std::pow(data[i].functionValue, 0.5);
 		//data[i].result = 1 / data[i].functionValue;
-		/*if (model[data[i].num[1]].point[0] - model[data[i].num[0]].point[0] > 0)
-		{
-			data[i].result *= (1 + coefficient * 100);
-			if (model[data[i].num[1]].point[1] - model[data[i].num[0]].point[1] > 0)
-				data[i].result *= (1 + coefficient * 100);
-		}*/
 		resultSumValue += data[i].result;
 	}
 	if (enableSort)
