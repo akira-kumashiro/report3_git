@@ -52,7 +52,6 @@ public:
 	Data eliteData;
 	std::vector<PointXY> model;
 	GA(int _max_genom_list, int _var_num, std::vector<GA::PointXY> _model);	//コンストラクタ
-	GA(std::vector<Data> _data, std::vector<GA::PointXY> _model);	//コンストラクタ
 	bool selection();//選択
 	void pmxCrossover();
 	void mutation();//突然変異
