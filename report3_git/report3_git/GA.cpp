@@ -3,21 +3,19 @@
 
 GA::GA(int _max_genom_list, int _var_num, std::vector<GA::PointXY> _model) :
 	data(std::vector<Data>(_max_genom_list, _var_num)),//dataの初期化
-	eliteData(_var_num),
-	cityTemp(_var_num)
+	eliteData(_var_num)
 {
 	//もらった変数をクラス内変数に格納
 	model = _model;
 	for (int i = 0; i < data[0].num.size(); i++)
 	{
-		cityTemp[i] = i;
+		cityTemp.push_back(i);
 	}
 	setEmptyNum();
 	prev_data = data;
 	calcResult();
 
 	displayValues(false);
-
 }
 
 bool GA::selection()
