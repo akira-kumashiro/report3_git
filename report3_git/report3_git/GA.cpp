@@ -262,7 +262,7 @@ void GA::setEmptyNum(void)
 {
 	for (int i = 0; i < data.size(); i++)
 	{
-		std::vector<int> noPlacedCity, noPlacedCityTemp;
+		std::vector<int> noPlacedCity;//, noPlacedCityTemp;
 		noPlacedCity = cityTemp;
 
 		for (int j = 0; j < data[i].num.size(); j++)
@@ -270,17 +270,24 @@ void GA::setEmptyNum(void)
 			if (data[i].num[j] != -1)
 				noPlacedCity[data[i].num[j]] = -1;
 		}
-
-		for (int j = 0; j < noPlacedCity.size(); j++)
+		auto itr = noPlacedCity.begin();
+		while (itr != noPlacedCity.end())
+		{
+ 		   if((*itr) == -1)
+  		      itr = noPlacedCity.erase(itr);
+  		  else
+  		      itr++;
+		}
+		/*for (int j = 0; j < noPlacedCity.size(); j++)
 		{
 			if (noPlacedCity[j] != -1)
 				noPlacedCityTemp.push_back(noPlacedCity[j]);
-		}
+		}*/
 		//noPlacedCity = noPlacedCityTemp;
 
 		std::random_device rnd;
 		std::mt19937 engine(rnd());
-		std::shuffle(noPlacedCityTemp.begin(),noPlacedCityTemp.end(),engine);
+		std::shuffle(noPlacedCity.begin(),noPlacedCity.end(),engine);
 		
 		/*for (int j = 0; j < noPlacedCity.size(); j++)
 		{
@@ -292,7 +299,7 @@ void GA::setEmptyNum(void)
 		for (int j = 0, point = 0; j < data[i].num.size(); j++)
 		{
 			if (data[i].num[j] == -1)
-				data[i].num[j] = noPlacedCityTemp[point++];
+				data[i].num[j] = noPlacedCity[point++];
 		}
 	}
 }
