@@ -8,7 +8,7 @@ GA::GA(int _max_genom_list, int _var_num, std::vector<GA::PointXY> _model) :
 {
 	//もらった変数をクラス内変数に格納
 	model = _model;
-	std::iota(cityTemp.begin(),cityTemp.end(),0);
+	std::iota(cityTemp.begin(), cityTemp.end(), 0);
 	/*for (int i = 0; i < data[0].num.size(); i++)
 	{
 		cityTemp.push_back(i);
@@ -107,21 +107,24 @@ void GA::mutation()
 #ifdef __ENABLE_SINGLE_POINT_MUTATION__
 			int pos = random(0, (int)data[i].x.size() - 1);
 			data[i].num[pos] = -1;
-#elif __ENABLE_DOUBLE_POINT_MUTATION__
+#endif
+#ifdef __ENABLE_DOUBLE_POINT_MUTATION__
 			int del1 = random(0, (int)data[i].num.size() - 1);
 			int del2 = random(0, (int)data[i].num.size() - 1);
-			
+
 			data[i].num[del1] = -1;
 			data[i].num[del2] = -1;
-#elif __ENABLE_SEGMENTAL_MUTATION__
+#endif
+#ifdef __ENABLE_SEGMENTAL_MUTATION__
 			int del1 = random(0, (int)data[i].num.size() - 1);
 			int del2 = random(del1, (int)data[i].num.size());
-			
+
 			for (int j = del1; j < del2; j++)
 			{
 				data[i].num[j] = -1;
 			}
-#else
+#endif
+#if !defined(__ENABLE_SINGLE_POINT_MUTATION__) && !defined(__ENABLE_DOUBLE_POINT_MUTATION__) && !defined(__ENABLE_SEGMENTAL_MUTATION__)
 			for (int j = 0; j < data[i].num.size(); j++)
 			{
 				if (random(0.0, 1.0) <= genomMutationRate)
@@ -161,7 +164,7 @@ void GA::calc(bool enableDisplay, bool enableOneLine)
 		}
 	}
 	//評価関数が最もいいやつを保存
-	if(data[minNum].result < eliteData.result)
+	if (data[minNum].result < eliteData.result)
 		data[minNum] = eliteData;
 
 	calcResult();
@@ -273,10 +276,10 @@ void GA::setEmptyNum(void)
 		auto itr = noPlacedCity.begin();
 		while (itr != noPlacedCity.end())
 		{
- 		   if((*itr) == -1)
-  		      itr = noPlacedCity.erase(itr);
-  		  else
-  		      itr++;
+			if ((*itr) == -1)
+				itr = noPlacedCity.erase(itr);
+			else
+				itr++;
 		}
 		/*for (int j = 0; j < noPlacedCity.size(); j++)
 		{
@@ -287,8 +290,8 @@ void GA::setEmptyNum(void)
 
 		std::random_device rnd;
 		std::mt19937 engine(rnd());
-		std::shuffle(noPlacedCity.begin(),noPlacedCity.end(),engine);
-		
+		std::shuffle(noPlacedCity.begin(), noPlacedCity.end(), engine);
+
 		/*for (int j = 0; j < noPlacedCity.size(); j++)
 		{
 			int point = random(0, (int)noPlacedCityTemp.size() - 1);

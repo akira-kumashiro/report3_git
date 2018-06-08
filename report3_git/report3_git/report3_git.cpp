@@ -73,7 +73,7 @@ int main()
 		GA::PointXY(1260.0,1910.0),
 		GA::PointXY(360.0,1980.0)
 	};
-	
+
 	//遺伝的アルゴリズム諸関数をまとめたクラスの宣言
 	std::vector<GA> ga(4, GA(MAX_GENOM_LIST, cityData.size(), cityData));
 	GA gaJointed(MAX_GENOM_LIST * 2, cityData.size(), cityData);
@@ -101,10 +101,10 @@ int main()
 		ga[i].calcResult(true);
 		for (int j = 0; j < MAX_GENOM_LIST / 2; j++)//上位半分を結合クラスに
 		{
-			gaJointed.data[j + MAX_GENOM_LIST * i] = ga[i].data[j];
+			gaJointed.data[j + MAX_GENOM_LIST * i / 2] = ga[i].data[j + MAX_GENOM_LIST / 2];
 		}
 	}
-	
+
 	gaJointed.calc(true);
 
 	for (int i = 0; i <= MAX_GENERATION; i++)//メインのループ

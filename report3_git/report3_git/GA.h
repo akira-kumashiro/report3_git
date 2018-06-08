@@ -6,6 +6,7 @@
 #include <random>
 #include <algorithm>
 #include <cmath>
+#include <numeric>
 
 //#define __ENABLE_SINGLE_POINT_MUTATION__
 #define __ENABLE_DOUBLE_POINT_MUTATION__
@@ -14,7 +15,7 @@
 class GA
 {
 private:
-	double individualMutationRate = 0.6;//個体突然変異率
+	double individualMutationRate = 0.8;//個体突然変異率
 	double genomMutationRate = 0.5;
 	bool isChanged = false;
 	double alpha = 1;
