@@ -105,6 +105,10 @@ void GA::pmxCrossover()
 
 void GA::mutation()
 {
+	/*genNum++;
+	individualMutationRate = individualMutationRate / std::log(genNum/10);*/
+
+
 	for (int i = 0; i < data.size(); i++)
 	{
 		if (random(0.0, 1.0) <= individualMutationRate)//ŒÂ‘Ì“Ë‘R•ÏˆÙ—¦‚ÌŒvŽZ
@@ -113,11 +117,22 @@ void GA::mutation()
 			int pos = random(0, (int)data[i].x.size() - 1);
 			data[i].num[pos] = -1;
 #else
-			for (int j = 0; j < data[i].num.size(); j++)
+			/*for (int j = 0; j < data[i].num.size(); j++)
 			{
 				if (random(0.0, 1.0) <= genomMutationRate)
 					data[i].num[j] = -1;
-			}
+			}*/
+			int del1 = random(0, (int)data[i].num.size() - 1);
+			int del2 = random(del1, (int)data[i].num.size());
+			/*for (int j = del1; j < del2; j++)
+			{
+				data[i].num[j] = -1;
+			}*/
+			//int pos1 = data[i].num[del1];
+			//int pos2 = data[i].num[del2];
+
+			data[i].num[del1] = -1;
+			data[i].num[del2] = -1;
 #endif
 	}
 }
@@ -200,7 +215,8 @@ void GA::calcResult(bool enableSort)
 	{
 		//data[i].result = std::exp(-data[i].functionValue*alpha*coefficient) / coefficient;
 		//data[i].result = seg2 == 0 ? 0 : (data[i].functionValue - seg) / seg2 / coefficient;//—^‚¦‚ç‚ê‚½ŠÖ”‚Ì’l‚©‚çØ•Ð‚ÅÝ’è‚µ‚½’l‚ðˆø‚¢‚Ä2æ‚·‚é¨—^‚¦‚ç‚ê‚½ŠÖ”‚Ì’l‚ª¬‚³‚¢‚â‚Â‚ª‹­‚­‚È‚é
-		data[i].result = 1 / std::pow(data[i].functionValue, 2.0);
+		data[i].result = 1 / std::pow(data[i].functionValue, 0.5);
+		//data[i].result = 1 / data[i].functionValue;
 		/*if (model[data[i].num[1]].point[0] - model[data[i].num[0]].point[0] > 0)
 		{
 			data[i].result *= (1 + coefficient * 100);

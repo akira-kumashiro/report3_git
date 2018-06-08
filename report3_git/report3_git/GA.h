@@ -12,12 +12,13 @@
 class GA
 {
 private:
-	double individualMutationRate = 0.3;//ŒÂ‘Ì“Ë‘R•ÏˆÙ—¦
-	double genomMutationRate = 0.3;
+	double individualMutationRate = 0.8;//ŒÂ‘Ì“Ë‘R•ÏˆÙ—¦
+	double genomMutationRate = 0.5;
 	bool isChanged = false;
 	double alpha = 1;
 	int localMinNum = 0;
 	std::vector<int> cityTemp;
+	int genNum = 1;
 public:
 	double resultSumValue;//•]‰¿ŠÖ”‚Ì‡Œv
 
