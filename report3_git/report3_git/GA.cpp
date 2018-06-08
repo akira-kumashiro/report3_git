@@ -3,14 +3,16 @@
 
 GA::GA(int _max_genom_list, int _var_num, std::vector<GA::PointXY> _model) :
 	data(std::vector<Data>(_max_genom_list, _var_num)),//dataの初期化
-	eliteData(_var_num)
+	eliteData(_var_num),
+	cityTemp(_var_num)
 {
 	//もらった変数をクラス内変数に格納
 	model = _model;
-	for (int i = 0; i < data[0].num.size(); i++)
+	std::iota(cityTemp.begin(),cityTemp.end(),0);
+	/*for (int i = 0; i < data[0].num.size(); i++)
 	{
 		cityTemp.push_back(i);
-	}
+	}*/
 	setEmptyNum();
 	prev_data = data;
 	calcResult();
@@ -274,19 +276,23 @@ void GA::setEmptyNum(void)
 			if (noPlacedCity[j] != -1)
 				noPlacedCityTemp.push_back(noPlacedCity[j]);
 		}
-		noPlacedCity = noPlacedCityTemp;
+		//noPlacedCity = noPlacedCityTemp;
 
-		for (int j = 0; j < noPlacedCity.size(); j++)
+		std::random_device rnd;
+		std::mt19937 engine(rnd());
+		std::shuffle(noPlacedCityTemp.begin(),noPlacedCityTemp.end(),engine);
+		
+		/*for (int j = 0; j < noPlacedCity.size(); j++)
 		{
 			int point = random(0, (int)noPlacedCityTemp.size() - 1);
 			noPlacedCity[j] = noPlacedCityTemp[point];
 			noPlacedCityTemp.erase(noPlacedCityTemp.begin() + point);
-		}
+		}*/
 
 		for (int j = 0, point = 0; j < data[i].num.size(); j++)
 		{
 			if (data[i].num[j] == -1)
-				data[i].num[j] = noPlacedCity[point++];
+				data[i].num[j] = noPlacedCityTemp[point++];
 		}
 	}
 }
