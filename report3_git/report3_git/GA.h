@@ -12,7 +12,7 @@
 class GA
 {
 private:
-	double individualMutationRate = 0.6;//ŒÂ‘Ì“Ë‘R•ÏˆÙ—¦
+	double individualMutationRate = 0.6;//å€‹ä½“çªç„¶å¤‰ç•°ç‡
 	double genomMutationRate = 0.5;
 	bool isChanged = false;
 	double alpha = 1;
@@ -20,16 +20,16 @@ private:
 	std::vector<int> cityTemp;
 	int genNum = 1;
 public:
-	double resultSumValue;//•]‰¿ŠÖ”‚Ì‡Œv
+	double resultSumValue;//è©•ä¾¡é–¢æ•°ã®åˆè¨ˆ
 
-	class Data//ƒf[ƒ^Ši”[—pƒNƒ‰ƒX
+	class Data//ãƒ‡ãƒ¼ã‚¿æ ¼ç´ç”¨ã‚¯ãƒ©ã‚¹
 	{
 	public:
-		std::vector<int> num;//À•W
-		double functionValue;//—^‚¦‚ç‚ê‚½ŠÖ”‚Ì’l
+		std::vector<int> num;//åº§æ¨™
+		double functionValue;//ä¸ãˆã‚‰ã‚ŒãŸé–¢æ•°ã®å€¤
 		double result;
 
-		Data(int _var_num) ://ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+		Data(int _var_num) ://ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 			num(std::vector<int>(_var_num, -1))
 		{
 
@@ -48,18 +48,18 @@ public:
 		}
 	};
 
-	std::vector<Data> data, prev_data;//‘€ì‘OŒã‚Å’l‚ğ•Û‚·‚é‚½‚ß‚É2ŒÂ
+	std::vector<Data> data, prev_data;//æ“ä½œå‰å¾Œã§å€¤ã‚’ä¿æŒã™ã‚‹ãŸã‚ã«2å€‹
 	Data eliteData;
 	std::vector<PointXY> model;
-	GA(int _max_genom_list, int _var_num, std::vector<GA::PointXY> _model);	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-	GA(std::vector<Data> _data, std::vector<GA::PointXY> _model);	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-	bool selection();//‘I‘ğ
+	GA(int _max_genom_list, int _var_num, std::vector<GA::PointXY> _model);	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+	GA(std::vector<Data> _data, std::vector<GA::PointXY> _model);	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+	bool selection();//é¸æŠ
 	void pmxCrossover();
-	void mutation();//“Ë‘R•ÏˆÙ
-	void calc(bool enableDisplay, bool enableOneLine = false);//•]‰¿ŠÖ”‚ÌŒvZ
+	void mutation();//çªç„¶å¤‰ç•°
+	void calc(bool enableDisplay, bool enableOneLine = false);//è©•ä¾¡é–¢æ•°ã®è¨ˆç®—
 	void displayValues(bool enableOneLine);
-private:
 	void calcResult(bool enableSort = false);
+private:
 	int random(int min, int max);
 	double random(int min, double max);
 	double random(double min, int max);
@@ -67,5 +67,5 @@ private:
 	Data searchRank(int num);
 	void setEmptyNum(void);
 public:
-	~GA();//ƒfƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	~GA();//ãƒ‡ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 };
