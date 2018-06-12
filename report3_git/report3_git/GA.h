@@ -15,7 +15,7 @@
 class GA
 {
 private:
-	double individualMutationRate = 0.8;//個体突然変異率
+	double individualMutationRate = 0.4;//個体突然変異率
 	double genomMutationRate = 0.5;
 	bool isChanged = false;
 	double alpha = 1;

@@ -202,9 +202,9 @@ void GA::calcResult(bool enableSort)
 
 	for (int i = 0; i < data.size(); i++)
 	{
-		//data[i].result = std::exp(-data[i].functionValue*alpha*coefficient) / coefficient;
+		data[i].result = std::exp(-data[i].functionValue*alpha*coefficient) / coefficient;
 		//data[i].result = seg2 == 0 ? 0 : (data[i].functionValue - seg) / seg2 / coefficient;//与えられた関数の値から切片で設定した値を引いて2乗する→与えられた関数の値が小さいやつが強くなる
-		data[i].result = 1 / std::pow(data[i].functionValue, 0.5);
+		//data[i].result = 1 / std::pow(data[i].functionValue, 0.5);
 		//data[i].result = 1 / data[i].functionValue;
 		resultSumValue += data[i].result;
 	}

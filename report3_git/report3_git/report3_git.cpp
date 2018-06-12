@@ -5,7 +5,7 @@
 #include "GA.h"
 #include <conio.h>
 
-#define MAX_GENERATION 4500
+#define MAX_GENERATION 15000
 #define MAX_GENOM_LIST 50
 #define __ENABLE_MUTATION__
 /*
@@ -88,10 +88,10 @@ int main()
 #ifdef __ENABLE_MUTATION__
 			ga[i].mutation();//突然変異
 #endif
-			if (j % (MAX_GENERATION / 10) == 0 || change)
+			if (j % (MAX_GENERATION / 20) == 0 || change)
 			{
 				std::cout << "i=" << std::to_string(j) << std::endl;
-				ga[i].calc(true, j % (MAX_GENERATION / 10) != 0);//評価関数の計算
+				ga[i].calc(true, j % (MAX_GENERATION / 20) != 0);//評価関数の計算
 			}
 			else
 			{
