@@ -5,8 +5,8 @@
 #include "GA.h"
 #include <conio.h>
 
-#define MAX_GENERATION 15000
-#define MAX_GENOM_LIST 50
+#define MAX_GENERATION 30000
+#define MAX_GENOM_LIST 400
 #define __ENABLE_MUTATION__
 /*
 1    1150.0  1760.0
@@ -75,10 +75,11 @@ int main()
 	};
 
 	//遺伝的アルゴリズム諸関数をまとめたクラスの宣言
-	std::vector<GA> ga(4, GA(MAX_GENOM_LIST, cityData.size(), cityData));
-	GA gaJointed(MAX_GENOM_LIST * 2, cityData.size(), cityData);
+	//std::vector<GA> ga(4, GA(MAX_GENOM_LIST, cityData.size(), cityData));
+	//GA gaJointed(MAX_GENOM_LIST * 2, cityData.size(), cityData);
+	GA ga(MAX_GENOM_LIST, cityData.size(), cityData);
 
-	for (int i = 0; i < 4; i++)
+	/*for (int i = 0; i < 4; i++)
 	{
 		for (int j = 0; j <= MAX_GENERATION * 2; j++)//メインのループ
 		{
@@ -124,7 +125,29 @@ int main()
 		{
 			gaJointed.calc(false);//評価関数の計算
 		}
+	}*/
+
+	for (int i = 0; i <= MAX_GENERATION; i++)//メインのループ
+	{
+		bool change = ga.selection();//選択
+
+		ga.pmxCrossover();//交叉
+#ifdef __ENABLE_MUTATION__
+		ga.mutation();//突然変異
+#endif
+		if (change)
+		{
+			std::cout << "i=" << std::to_string(i) << std::endl;
+			ga.calc(true,change);//評価関数の計算
+		}
+		else
+		{
+			ga.calc(false);//評価関数の計算
+		}
 	}
+
+	std::cout << "i=" << std::to_string(MAX_GENERATION) << std::endl;
+	ga.calc(true, false);
 
 	while (1)
 	{

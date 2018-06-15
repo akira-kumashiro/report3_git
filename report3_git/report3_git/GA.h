@@ -9,14 +9,15 @@
 #include <numeric>
 
 //#define __ENABLE_SINGLE_POINT_MUTATION__
-#define __ENABLE_DOUBLE_POINT_MUTATION__
-//#define __ENABLE_SEGMENTAL_MUTATION__
+//#define __ENABLE_DOUBLE_POINT_MUTATION__
+#define __ENABLE_SEGMENTAL_MUTATION__
 
 class GA
 {
 private:
-	double individualMutationRate = 0.4;//個体突然変異率
-	double genomMutationRate = 0.5;
+	double individualMutationRate = 0.3;//個体突然変異率
+	double genomMutationRate = 0.3;
+	double crossoverRate = 0.8;
 	bool isChanged = false;
 	double alpha = 1;
 	int localMinNum = 0;

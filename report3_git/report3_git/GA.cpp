@@ -13,6 +13,7 @@ GA::GA(int _max_genom_list, int _var_num, std::vector<GA::PointXY> _model) :
 	{
 		cityTemp.push_back(i);
 	}*/
+	data[0].num = std::vector<int>{ 22, 7, 26, 15,12, 23, 0, 27, 5, 11, 8, 25, 2, 28, 4, 20, 1, 19, 9, 3, 14, 17, 13, 16, 21, 10, 18, 24, 6 };
 	setEmptyNum();
 	prev_data = data;
 	calcResult();
@@ -53,19 +54,22 @@ void GA::pmxCrossover()
 	//Step1
 	for (int i = 0; i < data.size(); i += 2)//2個ずつ交叉
 	{
-		int del1 = random(0, (int)data[0].num.size() - 1);
-		int del2 = random(del1, (int)data[0].num.size());
-		for (int j = 0; j < data[i].num.size(); j++)
+		if (random(0.0, 1.0) <= crossoverRate)
 		{
-			if (j<del1 || j>del2)
+			int del1 = random(0, (int)data[0].num.size() - 1);
+			int del2 = random(del1, (int)data[0].num.size());
+			for (int j = 0; j < data[i].num.size(); j++)
 			{
-				data[i].num[j] = -1;
-				data[i + 1].num[j] = -1;
-			}
-			else
-			{
-				data[i + 1].num[j] = prev_data[i].num[j];
-				data[i].num[j] = prev_data[i + 1].num[j];
+				if (j<del1 || j>del2)
+				{
+					data[i].num[j] = -1;
+					data[i + 1].num[j] = -1;
+				}
+				else
+				{
+					data[i + 1].num[j] = prev_data[i].num[j];
+					data[i].num[j] = prev_data[i + 1].num[j];
+				}
 			}
 		}
 	}
@@ -97,8 +101,8 @@ void GA::pmxCrossover()
 
 void GA::mutation()
 {
-	genNum += 0.001;
-	individualMutationRate = individualMutationRate / std::log(genNum);
+	//genNum += 0.001;
+	//individualMutationRate = individualMutationRate / std::log(genNum);
 
 	for (int i = 0; i < data.size(); i++)
 	{
@@ -206,8 +210,17 @@ void GA::calcResult(bool enableSort)
 		//data[i].result = seg2 == 0 ? 0 : (data[i].functionValue - seg) / seg2 / coefficient;//与えられた関数の値から切片で設定した値を引いて2乗する→与えられた関数の値が小さいやつが強くなる
 		//data[i].result = 1 / std::pow(data[i].functionValue, 0.5);
 		//data[i].result = 1 / data[i].functionValue;
+		//resultSumValue += data[i].result;
+	}
+
+	double normalization = searchRank(0).result;
+
+	for (int i = 0; i < data.size(); i++)
+	{
+		data[i].result = data[i].result / normalization;
 		resultSumValue += data[i].result;
 	}
+
 	if (enableSort)
 		std::sort(data.begin(), data.end(), [](const Data& x, const Data& y) { return x.functionValue > y.functionValue; });
 }
