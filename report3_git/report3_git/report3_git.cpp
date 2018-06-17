@@ -135,10 +135,10 @@ int main()
 #ifdef __ENABLE_MUTATION__
 		ga.mutation();//突然変異
 #endif
-		if (change)
+		if (i % (MAX_GENERATION / 10) == 0 || change)
 		{
 			std::cout << "i=" << std::to_string(i) << std::endl;
-			ga.calc(true,change);//評価関数の計算
+			ga.calc(true, i % (MAX_GENERATION / 10) != 0);//評価関数の計算
 		}
 		else
 		{

@@ -13,7 +13,7 @@ GA::GA(int _max_genom_list, int _var_num, std::vector<GA::PointXY> _model) :
 	{
 		cityTemp.push_back(i);
 	}*/
-	data[0].num = std::vector<int>{ 22, 7, 26, 15,12, 23, 0, 27, 5, 11, 8, 25, 2, 28, 4, 20, 1, 19, 9, 3, 14, 17, 13, 16, 21, 10, 18, 24, 6 };
+	//data[0].num = std::vector<int>{ 22, 7, 26, 15,12, 23, 0, 27, 5, 11, 8, 25, 2, 28, 4, 20, 1, 19, 9, 3, 14, 17, 13, 16, 21, 10, 18, 24, 6 };
 	setEmptyNum();
 	prev_data = data;
 	calcResult();
@@ -120,12 +120,24 @@ void GA::mutation()
 			data[i].num[del2] = -1;
 #endif
 #ifdef __ENABLE_SEGMENTAL_MUTATION__
-			int del1 = random(0, (int)data[i].num.size() - 1);
-			int del2 = random(del1, (int)data[i].num.size());
-
-			for (int j = del1; j < del2; j++)
+			if (random(0, 1))
 			{
-				data[i].num[j] = -1;
+				int del1 = random(0, (int)data[i].num.size() - 1);
+				int del2 = random(del1, (int)data[i].num.size());
+
+				for (int j = del1; j < del2; j++)
+				{
+					data[i].num[j] = -1;
+				}
+			}
+			else
+			{
+				int del1 = random(0, (int)data[i].num.size() - 1);
+				int del2 = random(0, (int)data[i].num.size() - 2);
+
+				int temp = data[i].num[del1];
+				data[i].num.erase(data[i].num.begin() + del1);
+				data[i].num.insert(data[i].num.begin() + del2, temp);
 			}
 #endif
 #if !defined(__ENABLE_SINGLE_POINT_MUTATION__) && !defined(__ENABLE_DOUBLE_POINT_MUTATION__) && !defined(__ENABLE_SEGMENTAL_MUTATION__)
@@ -199,8 +211,8 @@ void GA::calcResult(bool enableSort)
 		if (data[maxNum].functionValue < data[i].functionValue)//座標の中で最も関数が大きいやつを検索
 			maxNum = i;
 	}
-	double seg = data[maxNum].functionValue;//評価関数の切片を与えられた関数が最も大きいやつにセット
-	double seg2 = searchRank(data[0].num.size() - 2).functionValue - seg;
+	/*double seg = data[maxNum].functionValue;//評価関数の切片を与えられた関数が最も大きいやつにセット
+	double seg2 = searchRank(data[0].num.size() - 2).functionValue - seg;*/
 	resultSumValue = 0;
 	double coefficient = 0.001 / data[0].num.size();//評価関数用の定数
 
