@@ -27,7 +27,8 @@ bool GA::selection()
 	bool ret = isChanged;//最も評価の良い個体の変化の監視(デバッグ用)
 	isChanged = false;
 
-	eliteData = searchRank(0);//最も評価の良い個体を保持
+	//if (searchRank(0).functionValue - eliteData.functionValue < 0)
+		eliteData = searchRank(0);//最も評価の良い個体を保持
 	prev_data = data;
 	for (int i = 0; i < data.size(); i++)
 	{
@@ -120,7 +121,8 @@ void GA::mutation()
 			data[i].num[del2] = -1;
 #endif
 #ifdef __ENABLE_SEGMENTAL_MUTATION__
-			if (random(0, 1))
+			int a = random(0, 2);
+			if (!a)
 			{
 				int del1 = random(0, (int)data[i].num.size() - 1);
 				int del2 = random(del1, (int)data[i].num.size());
@@ -130,7 +132,7 @@ void GA::mutation()
 					data[i].num[j] = -1;
 				}
 			}
-			else
+			else if (a == 2)
 			{
 				int del1 = random(0, (int)data[i].num.size() - 1);
 				int del2 = random(0, (int)data[i].num.size() - 2);
@@ -139,15 +141,23 @@ void GA::mutation()
 				data[i].num.erase(data[i].num.begin() + del1);
 				data[i].num.insert(data[i].num.begin() + del2, temp);
 			}
+			else
+			{
+				for (int j = 0; j < data[i].num.size(); j++)
+				{
+					if (random(0.0, 1.0) <= genomMutationRate)
+						data[i].num[j] = -1;
+				}
+			}
 #endif
 #if !defined(__ENABLE_SINGLE_POINT_MUTATION__) && !defined(__ENABLE_DOUBLE_POINT_MUTATION__) && !defined(__ENABLE_SEGMENTAL_MUTATION__)
 			for (int j = 0; j < data[i].num.size(); j++)
 			{
 				if (random(0.0, 1.0) <= genomMutationRate)
 					data[i].num[j] = -1;
-			}
+	}
 #endif
-		}
+}
 	}
 }
 
@@ -161,22 +171,23 @@ void GA::calc(bool enableDisplay, bool enableOneLine)
 			minNum = i;
 	}
 	double nowElite = searchRank(0).functionValue;
-	if (eliteData.functionValue - nowElite > 1)
+	if (eliteData.functionValue - nowElite > 0)
 	{
 		_RPT0(_CRT_WARN, "changed\n");
 		isChanged = true;
-		alpha = 1;
+		alpha = 5;
 	}
 	else
 	{
 		if (!isChanged)
 		{
 			localMinNum++;
-			if (localMinNum > 20)
+			if (localMinNum > 5)
 			{
-				alpha += 1;
+				alpha =alpha/1.01;
 				localMinNum = 0;
 			}
+			//alpha += 0.1;
 		}
 	}
 	//評価関数が最もいいやつを保存
@@ -218,9 +229,9 @@ void GA::calcResult(bool enableSort)
 
 	for (int i = 0; i < data.size(); i++)
 	{
-		data[i].result = std::exp(-data[i].functionValue*alpha*coefficient) / coefficient;
+		//data[i].result = std::exp(-data[i].functionValue*alpha*coefficient);
 		//data[i].result = seg2 == 0 ? 0 : (data[i].functionValue - seg) / seg2 / coefficient;//与えられた関数の値から切片で設定した値を引いて2乗する→与えられた関数の値が小さいやつが強くなる
-		//data[i].result = 1 / std::pow(data[i].functionValue, 0.5);
+		data[i].result = 1 / std::pow(data[i].functionValue, alpha);
 		//data[i].result = 1 / data[i].functionValue;
 		//resultSumValue += data[i].result;
 	}

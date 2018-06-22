@@ -6,7 +6,7 @@
 #include <conio.h>
 
 #define MAX_GENERATION 30000
-#define MAX_GENOM_LIST 400
+#define MAX_GENOM_LIST 200
 #define __ENABLE_MUTATION__
 /*
 1    1150.0  1760.0
