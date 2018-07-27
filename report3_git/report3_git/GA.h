@@ -16,10 +16,10 @@ class GA
 {
 private:
 	double individualMutationRate = 0.4;//個体突然変異率
-	double genomMutationRate = 0.3;
-	double crossoverRate = 0.8;
+	double genomMutationRate = 0.4;
+	double crossoverRate = 0.6;
 	bool isChanged = false;
-	double alpha = 1;
+	long double alpha = 1;
 	int localMinNum = 0;
 	std::vector<int> cityTemp;
 	int genNum = 1;

@@ -9,10 +9,7 @@ GA::GA(int _max_genom_list, int _var_num, std::vector<GA::PointXY> _model) :
 	//もらった変数をクラス内変数に格納
 	model = _model;
 	std::iota(cityTemp.begin(), cityTemp.end(), 0);
-	/*for (int i = 0; i < data[0].num.size(); i++)
-	{
-		cityTemp.push_back(i);
-	}*/
+
 	//data[0].num = std::vector<int>{ 22, 7, 26, 15,12, 23, 0, 27, 5, 11, 8, 25, 2, 28, 4, 20, 1, 19, 9, 3, 14, 17, 13, 16, 21, 10, 18, 24, 6 };
 	setEmptyNum();
 	prev_data = data;
@@ -27,8 +24,7 @@ bool GA::selection()
 	bool ret = isChanged;//最も評価の良い個体の変化の監視(デバッグ用)
 	isChanged = false;
 
-	//if (searchRank(0).functionValue - eliteData.functionValue < 0)
-		eliteData = searchRank(0);//最も評価の良い個体を保持
+	eliteData = searchRank(0);//最も評価の良い個体を保持
 	prev_data = data;
 	for (int i = 0; i < data.size(); i++)
 	{
@@ -102,9 +98,6 @@ void GA::pmxCrossover()
 
 void GA::mutation()
 {
-	//genNum += 0.001;
-	//individualMutationRate = individualMutationRate / std::log(genNum);
-
 	for (int i = 0; i < data.size(); i++)
 	{
 		if (random(0.0, 1.0) <= individualMutationRate)//個体突然変異率の計算
@@ -155,9 +148,9 @@ void GA::mutation()
 			{
 				if (random(0.0, 1.0) <= genomMutationRate)
 					data[i].num[j] = -1;
-	}
+			}
 #endif
-}
+		}
 	}
 }
 
@@ -175,7 +168,7 @@ void GA::calc(bool enableDisplay, bool enableOneLine)
 	{
 		_RPT0(_CRT_WARN, "changed\n");
 		isChanged = true;
-		alpha = 5;
+		alpha = 70;
 	}
 	else
 	{
@@ -184,14 +177,14 @@ void GA::calc(bool enableDisplay, bool enableOneLine)
 			localMinNum++;
 			if (localMinNum > 5)
 			{
-				alpha =alpha/1.01;
+				alpha = alpha / 1.001;
 				localMinNum = 0;
 			}
 			//alpha += 0.1;
 		}
 	}
 	//評価関数が最もいいやつを保存
-	if (data[minNum].result < eliteData.result)
+	if (data[minNum].result < eliteData.result && data[minNum].functionValue > eliteData.functionValue)
 		data[minNum] = eliteData;
 
 	calcResult();
@@ -222,15 +215,12 @@ void GA::calcResult(bool enableSort)
 		if (data[maxNum].functionValue < data[i].functionValue)//座標の中で最も関数が大きいやつを検索
 			maxNum = i;
 	}
-	/*double seg = data[maxNum].functionValue;//評価関数の切片を与えられた関数が最も大きいやつにセット
-	double seg2 = searchRank(data[0].num.size() - 2).functionValue - seg;*/
 	resultSumValue = 0;
 	double coefficient = 0.001 / data[0].num.size();//評価関数用の定数
 
 	for (int i = 0; i < data.size(); i++)
 	{
 		//data[i].result = std::exp(-data[i].functionValue*alpha*coefficient);
-		//data[i].result = seg2 == 0 ? 0 : (data[i].functionValue - seg) / seg2 / coefficient;//与えられた関数の値から切片で設定した値を引いて2乗する→与えられた関数の値が小さいやつが強くなる
 		data[i].result = 1 / std::pow(data[i].functionValue, alpha);
 		//data[i].result = 1 / data[i].functionValue;
 		//resultSumValue += data[i].result;
@@ -301,7 +291,7 @@ void GA::setEmptyNum(void)
 {
 	for (int i = 0; i < data.size(); i++)
 	{
-		std::vector<int> noPlacedCity;//, noPlacedCityTemp;
+		std::vector<int> noPlacedCity;
 		noPlacedCity = cityTemp;
 
 		for (int j = 0; j < data[i].num.size(); j++)
@@ -317,23 +307,10 @@ void GA::setEmptyNum(void)
 			else
 				itr++;
 		}
-		/*for (int j = 0; j < noPlacedCity.size(); j++)
-		{
-			if (noPlacedCity[j] != -1)
-				noPlacedCityTemp.push_back(noPlacedCity[j]);
-		}*/
-		//noPlacedCity = noPlacedCityTemp;
 
 		std::random_device rnd;
 		std::mt19937 engine(rnd());
 		std::shuffle(noPlacedCity.begin(), noPlacedCity.end(), engine);
-
-		/*for (int j = 0; j < noPlacedCity.size(); j++)
-		{
-			int point = random(0, (int)noPlacedCityTemp.size() - 1);
-			noPlacedCity[j] = noPlacedCityTemp[point];
-			noPlacedCityTemp.erase(noPlacedCityTemp.begin() + point);
-		}*/
 
 		for (int j = 0, point = 0; j < data[i].num.size(); j++)
 		{
